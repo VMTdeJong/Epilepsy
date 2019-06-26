@@ -1,6 +1,7 @@
 library(coxme)
+library(survminer)
 
-epi <- read.csv(file.choose())
+source("load data.R")
 
 # Centering and trial mean
 Center <- function(x, trial.id) {
@@ -25,3 +26,11 @@ TrialMean  <- function(x, trial.id) {
 epi$EPTYPE.trialmean  <- TrialMean(epi$EPTYPE,  epi$TRIAL)
 epi$EPTYPE.center     <- Center(epi$EPTYPE,  epi$TRIAL)
 
+
+# Kaplan meier
+km <- survfit(Surv(SEZTIME, SCENS) ~  Drug + Epilepsy, data = epi)
+ggsurvplot(km)
+
+cairo_pdf("km.pdf")
+ggsurvplot(km)
+dev.off()
